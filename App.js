@@ -1,16 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet, Text, View, TextInput,Pressable } from 'react-native';
+import { use, useState } from 'react';
+import { StyleSheet, Text, View, TextInput,Pressable, Image } from 'react-native';
+import Loading from './src/components/loading';
 
 export default function App() {
 
 const [name, setname] = useState("")
 const [surname, setSurname] = useState("")
 const [result, setResult] = useState("")
+const [isloading, setIsloading] = useState(false)
 
   return (
     <View style={styles.container}>
 
+      <Image
+      source={require("./assets/images/signup_img.png")}
+      style={styles.foto}
+      />
       <Text>--------welcome {result} --------</Text>
 
       <TextInput
@@ -27,6 +33,7 @@ const [result, setResult] = useState("")
       <TextInput
       placeholder='Enter your password..'
       style={styles.input}
+      secureTextEntry={true}
       
       />
       <TextInput
@@ -37,6 +44,7 @@ const [result, setResult] = useState("")
       <TextInput
       placeholder='Enter your email..'
       style={styles.input}
+      inputMode='email'
      
       />
 
@@ -44,11 +52,20 @@ const [result, setResult] = useState("")
         backgroundColor: pressed ? "gray" : "lightblue"
       },
       styles.Buton]}
-      onPress={()=> setResult(name+surname)}>
+      onPress={()=> setIsloading(true)}>
         
         <Text style={styles.butontext} >BUTTON</Text>
       </Pressable>
+
+      {isloading ? <Loading></Loading> : null}
+
     </View>
+    
+
+    
+    
+    
+
   );
 }
 
@@ -79,6 +96,10 @@ const styles = StyleSheet.create({
   },
   butontext:{
     color:"white",
-    fontWeight: "bold",
+    fontWeight: "bold", 
+  },
+  foto:{
+    height: "100",
+    width:"100",
   }
 });
