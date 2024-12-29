@@ -1,118 +1,118 @@
 import { StatusBar } from 'expo-status-bar';
-import { use, useState } from 'react';
-import { StyleSheet, Text, View, TextInput,Pressable, Image } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Pressable, Image } from 'react-native';
 import Loading from '../../components/loading';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUsername, setPassword, setIsLoading, setLogin } from '../../redux/userSlice';
 
 
-const login = ({navigation}) =>  {
+const Login = ({ navigation }) => {
+ 
+    const {username, password, isLoading }= useSelector((state)=> state.user)
 
-const [name, setname] = useState("")
-const [surname, setSurname] = useState("")
-const [result, setResult] = useState("")
-const [isloading, setIsloading] = useState(false)
+    console.log(username, password, isLoading)
+
+    const dispatch = useDispatch()
 
   return (
     <View style={styles.container}>
-
       <Image
-      source={require("../../../assets/images/signin_img.png")}
-      style={styles.foto}
+        source={require("../../../assets/images/signin_img.png")}
+        style={styles.photo}
       />
-      <Text>--------welcome {result} --------</Text>
+      <Text style={styles.welcomeText}>-------- SIGN IN --------</Text>
 
-      <TextInput
-      placeholder='Enter your name..'
-      style={styles.input}
-      onChangeText={setname}
-      />
-      <TextInput
-      placeholder='Enter your surname..'
-      style={styles.input}
-      onChangeText={setSurname}
-      />
-      <TextInput
-      placeholder='Enter your password..'
-      style={styles.input}
-      secureTextEntry={true}
       
+      <TextInput
+        placeholder="Enter your usurname.."
+        style={styles.input}
+        onChangeText={(uname)=>dispatch(setUsername(uname))}
       />
       <TextInput
-      placeholder='Enter your phone number..'
-      style={styles.input}
-      keyboardType='numeric'
+        placeholder="Enter your password.."
+        style={styles.input}
+        onChangeText={(text)=>dispatch(setPassword(text))}
+        secureTextEntry={true}
       />
-      <TextInput
-      placeholder='Enter your email..'
-      style={styles.input}
-      inputMode='email'
-     
-      />
+      
 
-      <Pressable style={({pressed})=>[{
-        backgroundColor: pressed ? "gray" : "lightblue"
-      },
-      styles.Buton]}
-      onPress={()=> setIsloading(true)}>
-        
-        <Text style={styles.butontext} >BUTTON</Text>
+      <Pressable
+        style={({ pressed }) => [
+          { backgroundColor: pressed ? "gray" : "#007bff" },
+          styles.button,
+        ]}
+        onPress={()=>dispatch(setLogin(true))}
+      >
+        <Text style={styles.buttonText}>SIGN IN</Text>
       </Pressable>
 
-      <Pressable style={({pressed})=>[{
-        backgroundColor: pressed ? "gray" : "lightblue"
-      },
-      styles.Buton]}
-      onPress={()=> navigation.navigate('kayit')}>
-        
-        <Text style={styles.butontext} >signin</Text>
+      <Pressable
+        style={({ pressed }) => [
+          { backgroundColor: pressed ? "gray" : "#007bff" },
+          styles.button2,
+        ]}
+        onPress={() => navigation.navigate('kayit')}
+      >
+        <Text style={styles.buttonText}>!Sign up here!</Text>
       </Pressable>
 
-      
-
-
-
-
-      
-
-      {isloading ? <Loading></Loading> : null}
-
+      {isLoading ? <Loading /> : null}
     </View>
-
   );
-}
+};
 
-export default login;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'lightblue',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 16,
+  },
+  photo: {
+    height: 100,
+    width: 100,
+    marginBottom: 20,
+  },
+  welcomeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
   },
   input: {
-    borderWidth:1,
+    borderWidth: 1,
     width: '80%',
-    height:50,
-    borderRadius:10,
+    height: 50,
+    borderRadius: 10,
     textAlign: 'center',
-    marginVertical:10,
+    marginVertical: 10,
+    backgroundColor: '#f9f9f9',
+    borderColor: '#ccc',
+    fontSize: 16,
   },
-  Buton:{
-    borderWidth:1,
+  button: {
     width: '80%',
-    height:50,
-    borderRadius:10,
+    height: 50,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical:10,
-    
+    marginVertical: 10,
   },
-  butontext:{
-    color:"white",
-    fontWeight: "bold", 
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
-  foto:{
-    height: "100",
-    width:"100",
-  }
+  button2: {
+    width: '50%',
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+    backgroundColor: 'grey',
+  },
 });
