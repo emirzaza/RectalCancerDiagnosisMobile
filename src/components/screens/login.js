@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, Image } from 'react-nativ
 import Loading from '../../components/loading';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUsername, setPassword, setIsLoading, setLogin } from '../../redux/userSlice';
-
+import { login } from '../../redux/userSlice';
 
 const Login = ({ navigation }) => {
  
@@ -41,7 +41,7 @@ const Login = ({ navigation }) => {
           { backgroundColor: pressed ? "gray" : "#007bff" },
           styles.button,
         ]}
-        onPress={()=>dispatch(setLogin(true))}
+        onPress={()=>dispatch(login({username,password}))}
       >
         <Text style={styles.buttonText}>SIGN IN</Text>
       </Pressable>

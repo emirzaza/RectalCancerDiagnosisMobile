@@ -4,6 +4,7 @@ import AuthStack from './authStack';
 import UserStack from './userStack';
 import { setLogin } from '../redux/userSlice';
 import { useSelector } from 'react-redux';
+import app from '../../firebaseConfig';
 
 const rootstack = () => {
 

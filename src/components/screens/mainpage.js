@@ -1,21 +1,94 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import * as DocumentPicker from 'expo-document-picker';
 
 const Mainpage = () => {
+  const [mriName, setMriName] = useState('');
+  const [file, setFile] = useState(null);
+
+  const pickFile = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: '*/*', // Her tür dosyayı seçmek için
+        copyToCacheDirectory: true,
+      });
+
+      if (result.type === 'success') {
+        // Yalnızca .nii uzantılı dosyaları kabul et
+        if (result.name.endsWith('.nii')) {
+          setFile(result); // Seçilen dosyayı state'e kaydet
+          Alert.alert('Dosya seçildi:', result.name);
+          console.log('Seçilen dosya:', result);
+        } else {
+          Alert.alert('Yalnızca .nii uzantılı dosyaları seçebilirsiniz.');
+        }
+      } else {
+        Alert.alert('Dosya seçilmedi.');
+      }
+    } catch (error) {
+      console.error('Dosya seçimi sırasında hata:', error);
+      Alert.alert('Bir hata oluştu:', error.message);
+    }
+  };
+
+  const submitForm = async () => {
+    if (!file || !mriName.trim()) {
+      Alert.alert('Lütfen tüm alanları doldurun ve bir dosya seçin.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: file.uri,
+      type: 'application/octet-stream',
+      name: file.name,
+    });
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+      });
+      const data = await response.json();
+      Alert.alert('Yanıt:', data.result || 'Yanıt alınamadı.');
+    } catch (error) {
+      console.error('API çağrısı sırasında hata:', error);
+      Alert.alert('Bir hata oluştu:', error.message);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formWrapper}>
         <Text style={styles.heading}>Upload NII File</Text>
 
         <Text style={styles.label}>Name your MRI:</Text>
-        <TextInput style={styles.input} placeholder="Enter MRI name" />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter MRI name"
+          value={mriName}
+          onChangeText={setMriName}
+        />
 
         <Text style={styles.label}>Choose a NII File:</Text>
-        <TouchableOpacity style={styles.fileInputButton}>
-          <Text style={styles.fileInputButtonText}>Choose File</Text>
+        <TouchableOpacity style={styles.fileInputButton} onPress={pickFile}>
+          <Text style={styles.fileInputButtonText}>
+            {file ? file.name : 'Choose File'}
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={submitForm}>
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
       </View>
@@ -41,7 +114,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#d9e9f3',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   },
   heading: {
     fontSize: 20,
